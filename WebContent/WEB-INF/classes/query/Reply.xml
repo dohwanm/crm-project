@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> -->
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.spring.reply.dao.ReplyDao">
+	<!-- 게시물 기본 조회 -->
+	<select id="replyList" parameterType="reply" resultType="reply">
+		SELECT r_num, h_Num, r_name, r_content, r_pwd,
+			   TO_CHAR(r_insertdate,'YYYY-MM-DD HH24:MI:SS')AS r_insertdate
+		FROM spring_reply
+		WHERE h_Num = #{h_Num}
+		AND r_deleteYN = 'Y'
+		ORDER BY r_num DESC
+	</select>
+	
+	<!-- 게시물 등록 -->
+	<insert id="replyInsert" parameterType="reply">
+		INSERT INTO spring_reply (
+			r_num, h_Num, r_name, r_content, r_pwd,r_insertdate, r_updatedate, r_deleteYN
+		)VALUES(
+			#{r_num}, #{h_Num}, #{r_name}, #{r_content}, #{r_pwd}, SYSDATE, SYSDATE, 'Y' 
+		)
+	</insert>
+	
+	<update id="replyUpdate" parameterType="reply">
+		UPDATE spring_reply
+		SET r_content = #{r_content},
+		r_updatedate = SYSDATE
+		WHERE r_num = #{r_num}
+	</update>
+	
+	<update id="replyDelete" parameterType="String">
+		UPDATE spring_reply
+		SET r_deleteYN = 'N',
+		r_updatedate = SYSDATE
+		WHERE r_num = #{r_num}
+	</update>
+	
+	<select id="replyChaebun" parameterType="String" resultType="String">
+		SELECT NVL(MAX(SUBSTR(r_num,-4)),0)+1 FROM spring_reply
+	</select>
+	
+	
+</mapper>
